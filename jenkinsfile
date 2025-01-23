@@ -1,0 +1,63 @@
+pipeline{
+    agent any
+
+    tools{
+        nodejs "node-18.20.2"
+    }
+    stages{
+        stage('Checkout'){
+            steps{
+                git branch: 'main', url: 'https://github.com/AdityaAngular01/TodoListJenkinsPipeline.git'
+            }
+        }
+
+        stage('Dependency Installation'){
+            steps{
+                sh 'npm install'
+            }
+        }
+
+        stage('Lint Code'){
+            steps{
+                sh 'npm run lint'
+            }
+        }
+
+        stage('Run Test'){
+            steps{
+                sh 'npm run test'
+                sh 'npm run test:integration'
+            }
+        }
+
+        stage('Test Coverage'){
+            steps{
+                sh 'npm run test:coverage'
+            }
+        }
+
+        stage('Build App'){
+            steps{
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy'){
+            sh 'npm run deploy'
+        }
+    }
+
+    post{
+        always{
+            echo 'Cleaning up...'
+        }
+
+        success{
+            echo 'Build and tests passes successfully...'
+        }
+
+        failure{
+            echo 'Build failed. check the logs!'
+        }
+    }
+}
