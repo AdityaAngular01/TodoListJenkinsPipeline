@@ -4,6 +4,7 @@ const { expect } = require("chai");
 
 describe("To-Do List API", () => {
 	let taskId;
+	let deleteTaskID;
 
 	// Test POST /api/tasks (Create Task)
 	it("should create a new task", async () => {
@@ -24,6 +25,7 @@ describe("To-Do List API", () => {
 		expect(res.status).to.equal(200);
 		expect(res.body).to.be.an("array");
 		expect(res.body.length).to.be.greaterThan(0); // Ensure at least one task exists
+		deleteTaskID = res.body[0]._id; // Save the first taskId for further deletion test
 	});
 
 	// Test GET /api/tasks/:id (Get Task by ID)
@@ -47,7 +49,7 @@ describe("To-Do List API", () => {
 
 	// Test DELETE /api/tasks/:id (Delete Task)
 	it("should delete a task", async () => {
-		const res = await request(app).delete(`/api/tasks/${taskId}`);
+		const res = await request(app).delete(`/api/tasks/${deleteTaskID}`);
 
 		expect(res.status).to.equal(200);
 		expect(res.body).to.have.property("msg", "Task removed"); // Ensure task is deleted successfully
